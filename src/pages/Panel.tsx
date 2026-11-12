@@ -161,7 +161,7 @@ export default function Panel({ fechaHoy }: { fechaHoy: string }) {
           {avisos.length === 0 ? <div className="vacio">Sin avisos pendientes.</div> : avisos.map((a) => (
             <div key={a.id} className="tarjeta">
               <div className="estado-linea">
-                <span>{nombrePersona(a.persona_id)} · {nombreDia(a.fecha)} {horaCorta(a.created_at)}</span>
+                <span>{nombrePersona(a.persona_id)} · {nombreDia(a.fecha)} {horaCorta(a.created_at)}{!a.compartido && ' · solo para vos'}</span>
                 {a.resuelto ? <span className="okc">Resuelto</span> : <button className="btn sec chico" onClick={() => resolver(a)}>Marcar resuelto</button>}
               </div>
               <div>{a.texto}</div>
