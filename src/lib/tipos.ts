@@ -95,6 +95,7 @@ export type Aviso = {
   texto: string
   foto_path: string | null
   resuelto: boolean
+  compartido: boolean
   created_at: string
 }
 
