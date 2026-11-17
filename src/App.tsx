@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { configurado, supabase } from './lib/supabase'
+import { conCache, leerCola, sincronizar, useConexion } from './lib/offline'
+import './conexion.css'
 import { fechaLarga, fechaOperativa } from './lib/fecha'
 import type { Persona } from './lib/tipos'
 import Login from './pages/Login'
@@ -45,21 +47,18 @@ export default function App() {
     return () => data.subscription.unsubscribe()
   }, [])
 
+  // Solo se vuelve a buscar la persona si cambia el usuario. Antes se recargaba cada vez que
+  // Supabase renovaba la sesión (al desbloquear el teléfono) y se perdía lo que estaban cargando.
+  const uid = sesion?.user.id ?? null
   useEffect(() => {
     setPersona(null)
     setError(null)
-    if (!sesion) return
-    supabase
-      .from('personas')
-      .select('*')
-      .eq('auth_id', sesion.user.id)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (error) setError(error.message)
-        else if (!data) setError('Tu usuario no está asociado a ninguna persona activa. Avisale a Pato.')
-        else setPersona(data as Persona)
-      })
-  }, [sesion])
+    if (!uid) return
+    conCache<Persona>(`persona:${uid}`, () => supabase.from('personas').select('*').eq('auth_id', uid).maybeSingle()).then(({ data, error }) => {
+      if (data) { setPersona(data); void sincronizar() }
+      else setError(error ?? 'Tu usuario no está asociado a ninguna persona activa. Avisale a Pato.')
+    })
+  }, [uid])
 
   const pestanas = useMemo<Pestana[]>(() => {
     if (!persona) return []
@@ -84,6 +83,8 @@ export default function App() {
   if (!sesion) return <Login />
 
   const salir = async () => {
+    const pendientes = leerCola().length
+    if (pendientes && !confirm(`Hay ${pendientes} cosa(s) guardadas en el teléfono que todavía no subieron. Si salís ahora se pierden. ¿Salir igual?`)) return
     await supabase.auth.signOut()
     setPestana('hoy')
   }
@@ -109,6 +110,7 @@ export default function App() {
         <button className="salir" onClick={salir}>Salir</button>
       </header>
       <div className="fecha-band">{fechaLarga(fecha)}</div>
+      <BandaConexion />
 
       {persona.rol === 'admin' ? (
         <Panel fechaHoy={fecha} />
@@ -133,5 +135,17 @@ export default function App() {
         </>
       )}
     </>
+  )
+}
+
+function BandaConexion() {
+  const { pendientes, enLinea } = useConexion()
+  if (enLinea && !pendientes) return null
+  return (
+    <div className={`banda-conexion ${enLinea ? '' : 'sin-senal'}`}>
+      {enLinea
+        ? `Subiendo ${pendientes} cambio${pendientes === 1 ? '' : 's'}…`
+        : `Sin señal: podés seguir cargando. ${pendientes ? `${pendientes} cambio${pendientes === 1 ? '' : 's'} guardado${pendientes === 1 ? '' : 's'} en el teléfono.` : ''}`}
+    </div>
   )
 }

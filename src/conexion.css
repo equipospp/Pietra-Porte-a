@@ -1,0 +1,8 @@
+/* ---------- Guardado en el teléfono / conexión ---------- */
+.estado-sync { font-size: 14px; padding: 8px 12px; border-radius: 10px; margin-bottom: 10px; }
+.estado-sync.ok { background: var(--ok-suave); color: var(--ok); }
+.estado-sync.pendiente { background: var(--alerta-suave); color: var(--alerta); }
+.prod.en-telefono { background: var(--alerta-suave); border-color: transparent; }
+.prod.en-telefono .u { color: var(--alerta); }
+.banda-conexion { background: var(--alerta-suave); color: var(--alerta); font-size: 14px; padding: 6px 16px; font-weight: 600; }
+.banda-conexion.sin-senal { background: #3a3a3a; color: #fff; }

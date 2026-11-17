@@ -4,6 +4,7 @@ import { horaCorta, nombreDia } from '../lib/fecha'
 import { subirFoto } from '../lib/fotos'
 import { supabase } from '../lib/supabase'
 import type { Persona } from '../lib/tipos'
+import { encolar } from '../lib/offline'
 
 type AvisoEquipo = {
   id: number
@@ -34,9 +35,17 @@ export default function Avisos({ persona: _persona, fecha }: { persona: Persona;
 
   const enviar = async () => {
     if (!texto.trim()) { setError('Escribí qué pasa.'); return }
-    setOcupado(true)
     setError(null)
     setMensaje(null)
+    if (!navigator.onLine) {
+      if (foto) { setError('Sin señal no se puede mandar la foto. Mandalo sin foto o esperá a que vuelva la señal.'); return }
+      encolar({ clave: `aviso|${Date.now()}`, tabla: 'avisos', tipo: 'insert', fila: { fecha, texto: texto.trim(), foto_path: null, compartido: !soloPato, created_at: new Date().toISOString() } })
+      setTexto('')
+      setSoloPato(false)
+      setMensaje('Sin señal: el aviso quedó guardado en el teléfono y se manda solo cuando vuelva la señal.')
+      return
+    }
+    setOcupado(true)
     try {
       const foto_path = foto ? await subirFoto(foto, fecha, 'aviso') : null
       const { error } = await supabase.from('avisos').insert({ fecha, texto: texto.trim(), foto_path, compartido: !soloPato })

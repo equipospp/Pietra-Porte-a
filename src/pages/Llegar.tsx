@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import FotoBoton from '../components/FotoBoton'
 import { diaSemana } from '../lib/fecha'
-import { subirFoto } from '../lib/fotos'
+import { subirFoto, urlsFotos } from '../lib/fotos'
 import { supabase } from '../lib/supabase'
 import type { Persona, Revision, Sector } from '../lib/tipos'
 
@@ -15,6 +15,7 @@ export default function Llegar({ persona, fecha }: { persona: Persona; fecha: st
   const [ocupado, setOcupado] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [listo, setListo] = useState(false)
+  const [fotos, setFotos] = useState<Record<string, string>>({})
 
   const cargar = useCallback(async () => {
     const [s, r] = await Promise.all([
@@ -25,6 +26,7 @@ export default function Llegar({ persona, fecha }: { persona: Persona; fecha: st
     setSectores(((s.data as Sector[]) ?? []).filter((x) => x.dias.includes(diaSemana(fecha))))
     setRevisiones((r.data as Revision[]) ?? [])
     setListo(true)
+    setFotos(await urlsFotos(((r.data as Revision[]) ?? []).map((x) => x.foto_path).filter(Boolean) as string[]))
   }, [persona, fecha])
 
   useEffect(() => { cargar() }, [cargar])
@@ -70,6 +72,9 @@ export default function Llegar({ persona, fecha }: { persona: Persona; fecha: st
               {r && <span className={r.estado === 'ok' ? 'okc' : 'pend'}>{r.estado === 'ok' ? 'Está bien' : 'Quedó pendiente'}</span>}
             </div>
             {r?.comentario && <div className="detalle" style={{ fontSize: 13, color: 'var(--gris)' }}>{r.comentario}</div>}
+            {r?.foto_path && (fotos[r.foto_path]
+              ? <a href={fotos[r.foto_path]} target="_blank" rel="noreferrer"><img className="foto-mini" style={{ marginTop: 6 }} src={fotos[r.foto_path]} alt="Foto del sector" /></a>
+              : <div className="detalle" style={{ fontSize: 13, color: 'var(--ok)' }}>Foto guardada ✓</div>)}
             {abierto === s.id ? (
               <div style={{ marginTop: 10 }}>
                 <label className="campo">¿Qué quedó pendiente?</label>

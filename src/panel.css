@@ -1,0 +1,41 @@
+/* ---------- Panel de Pato ---------- */
+.panel .actualizado { font-size: 13px; color: var(--gris); margin-bottom: 10px; }
+.panel button.link { background: none; border: 0; padding: 0; color: var(--rojo); text-decoration: underline; font-size: 13px; }
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.kpi { border: 1.5px solid var(--linea); background: #fff; border-radius: 12px; padding: 8px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.kpi b { font-family: 'Bebas'; font-size: 26px; line-height: 1; letter-spacing: .03em; }
+.kpi span { font-size: 12px; color: var(--gris); }
+.kpi.alerta b { color: var(--rojo); }
+.kpi.on { border-color: var(--rojo); background: var(--suave); }
+
+details.persona { border: 1px solid var(--linea); border-left: 6px solid var(--linea); border-radius: var(--radio); padding: 10px 12px; margin-bottom: 10px; background: #fff; }
+details.persona.verde { border-left-color: var(--ok); }
+details.persona.amarillo { border-left-color: var(--alerta); }
+details.persona.rojo { border-left-color: var(--rojo); }
+details.persona summary { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: baseline; cursor: pointer; list-style: none; }
+details.persona summary::-webkit-details-marker { display: none; }
+details.persona .nom { font-family: 'Bebas'; font-size: 22px; letter-spacing: .04em; }
+details.persona .turno-p { font-size: 12px; color: var(--gris); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+details.persona .cuenta { font-weight: 700; }
+details.persona.verde .cuenta { color: var(--ok); }
+details.persona.amarillo .cuenta { color: var(--alerta); }
+details.persona.rojo .cuenta { color: var(--rojo); }
+details.persona .progreso { margin: 6px 0 4px; }
+.persona .momento { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--bordo); margin: 10px 0 2px; }
+.persona .t { display: grid; grid-template-columns: 18px 1fr auto; gap: 6px; font-size: 14px; padding: 3px 0; border-bottom: 1px dashed var(--linea); }
+.persona .t .ic { font-weight: 700; }
+.persona .t.si .ic { color: var(--ok); }
+.persona .t.no .ic { color: var(--rojo); }
+.persona .t.no .tx { color: var(--tinta); font-weight: 600; }
+.persona .t.si .tx { color: var(--gris); }
+.persona .t .hr { font-size: 12px; color: var(--gris); white-space: nowrap; }
+.persona .t .hr a { text-decoration: none; }
+
+table.simple.stock td { vertical-align: top; font-size: 14px; }
+table.simple .prov { font-size: 11px; color: var(--gris); }
+table.simple.stock td.val { white-space: nowrap; font-weight: 600; }
+table.simple.stock td.quien { font-size: 12px; color: var(--gris); }
+table.simple.stock tr.falta td.val { color: var(--rojo); }
+table.simple.stock tr.poco td.val { color: var(--alerta); }
+.aviso-p { border-left: 6px solid var(--alerta); }
+.panel small { color: var(--gris); font-size: 12px; }

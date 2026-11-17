@@ -38,5 +38,5 @@ export function fechaLarga(fecha: string): string {
 }
 
 export function horaCorta(iso: string): string {
-  return new Date(iso).toLocaleTimeString('es-AR', { timeZone: ZONA, hour: '2-digit', minute: '2-digit' })
+  return new Date(iso).toLocaleTimeString('es-AR', { timeZone: ZONA, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 }
